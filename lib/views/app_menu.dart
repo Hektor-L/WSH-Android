@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:workservicehub_project/views/lista_posts.dart';
-import 'package:workservicehub_project/views/lista_favorited.dart';
+import 'lista_posts.dart';
+import 'lista_favorited.dart';
+import 'profile_page.dart';
 
 class AppMenu extends StatefulWidget {
   const AppMenu({super.key});
@@ -17,7 +19,10 @@ class _AppMenuState extends State<AppMenu> {
     return MaterialApp(
       title: 'WorkServiceHub',
       theme: ThemeData(
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+        bottomNavigationBarTheme: BottomNavigationBarThemeData(
+            backgroundColor: Colors.blue, selectedItemColor: CupertinoColors.white,
+            unselectedItemColor: CupertinoColors.systemPurple),
+        appBarTheme: AppBarTheme(backgroundColor: Colors.blue),
       ),
       home: const MainPage(title: 'WorkServiceHub'),
     );
@@ -46,22 +51,24 @@ class _MainState extends State<MainPage> {
   int _currentIndex = 0;
   final List<Widget> _pages = [
     ListaPosts(),
-    ListaFavorited()
+    ListaFavorited(),
+    ProfilePage()
   ];
 
   @override
   void initState() {
+    super.initState();
     _currentIndex = 0;
   }
   AppBar _appBar(){
     return AppBar(
-      backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      backgroundColor: AppBarTheme.of(context).backgroundColor,
       title: Row(
         children: [
           SizedBox(
             width: 300,
             height: 50,
-            child: Image.asset('images/WorkServiceHubLogo.png')
+            child: Image.asset('images/WorkServiceHub-Logo.png')
           ),
         ],
       )
@@ -83,6 +90,10 @@ class _MainState extends State<MainPage> {
         BottomNavigationBarItem(
           icon: Icon(Icons.favorite),
           label: "Favoritos",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person),
+          label: "Perfil",
         ),
       ],
     );
