@@ -26,15 +26,15 @@ class Comment {
         text: map['text'] ?? '',
         commenterId: map['commenter_id'] ?? 0,
         postId: map['post_id'] ?? 0,
-        createdAt: DateTime.parse(map['created_at'].toString()),
+        createdAt: DateTime.parse((map['created_at'] ?? DateTime.now()).toString()),
     );
   }
-  static String encode(List<Comment> posts) => json.encode(
-    posts.map<Map<String, dynamic>>((p) => p.toMap()).toList(),
+  static String encode(List<Comment> posts) => jsonEncode(
+    posts.map<Map<String, dynamic>>((p) => p.toMap()).toList()
   );
 
   static List<Comment> decode(String commentsJson) =>
-    (json.decode(commentsJson) as List<dynamic>)
+    (jsonDecode(commentsJson) as List<dynamic>)
         .map<Comment>((item) => Comment.fromMap(item))
         .toList();
 }

@@ -20,6 +20,7 @@ class _LogoffState extends State<Logoff> {
   void fazerLogoff() async {
     await AuthController.unloadAuth();
   }
+  @override
   Widget build(BuildContext context){
     return Scaffold(
         backgroundColor: Colors.redAccent,

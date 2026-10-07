@@ -28,16 +28,16 @@ class User {
         name: map['name'] ?? '',
         email: map['email'] ?? '',
         description: map['description'] ?? '',
-        birthDate: DateTime.parse(map['birthDate'].toString()),
+        birthDate: DateTime.parse((map['birthDate'] ?? DateTime.now()).toString()),
         type: map['type'] ?? 'common',
     );
   }
-  static String encode(List<User> posts) => json.encode(
-    posts.map<Map<String, dynamic>>((p) => p.toMap()).toList(),
+  static String encode(List<User> posts) => jsonEncode(
+    posts.map<Map<String, dynamic>>((p) => p.toMap()).toList()
   );
 
   static List<User> decode(String usersJson) =>
-      (json.decode(usersJson) as List<dynamic>)
-          .map<User>((item) => User.fromMap(item))
-          .toList();
+    (jsonDecode(usersJson) as List<dynamic>)
+        .map<User>((item) => User.fromMap(item))
+        .toList();
 }

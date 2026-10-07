@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:workservicehub_project/controllers/auth_controller.dart';
+import 'package:workservicehub_project/models/classes/auth.dart';
 import 'package:workservicehub_project/views/login.dart';
 import 'package:workservicehub_project/views/splash2.dart';
 
@@ -14,7 +15,7 @@ class Splash1 extends StatefulWidget {
 class _SplashState extends State<Splash1> {
 
   Future<bool> verifyLogin() async {
-    if(await AuthController.verificaAutorizacaoOffline()) {
+    if(await AuthController.verifyAuthOffline()) {
       ScaffoldMessenger.of(context).showSnackBar(.new(content: Text('Bem-vindo novamente ao WorkServiceHub!')));
       Navigator.pushReplacement(
           context,
@@ -33,14 +34,14 @@ class _SplashState extends State<Splash1> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(seconds: 3), () async {
+    Future.delayed(Duration(seconds: 2), () async {
       await verifyLogin();
     });
   }
   @override
   Widget build(BuildContext context){
     return Scaffold(
-      backgroundColor: Colors.blueAccent,
+      backgroundColor: Colors.lightBlue,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -56,3 +57,4 @@ class _SplashState extends State<Splash1> {
     );
   }
 }
+late Auth loginData;

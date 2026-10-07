@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:workservicehub_project/controllers/user_list_controller.dart';
 import 'package:workservicehub_project/models/classes/comment.dart';
 import 'package:workservicehub_project/models/classes/post.dart';
@@ -29,6 +30,7 @@ class _ListaFavoritedState extends State<ListaFavorited> {
       for(Post p in data){
         if(p.favorited == false) {
           data.remove(p);
+          continue;
         }
         _posters.add(await UserListController.findUser(p.posterId));
       }
@@ -36,52 +38,63 @@ class _ListaFavoritedState extends State<ListaFavorited> {
         _posts = data;
       });
     } catch(x) {
-      print('Sem dados persistidos $x');
+      ScaffoldMessenger.of(context).showSnackBar(.new(content: Text('Sem dados persistidos.')));
     }
   }
 
   void favorite(Post p) async {
     await PostListController.favorite(p);
-    _posts.remove(p);
-    print('post de título ${p.title} removido dos favoritos.');
     loadData();
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Column(
-          mainAxisAlignment: .center,
-          children: [
-            Expanded(
-              child: ListView.builder(itemCount: _posts.length, itemBuilder: (context, index) {
-                final post = _posts[index];
-                final poster = _posters[index];
-                return Card(
-                  child: ListTile(
-                    title: Text(post.title),
-                    subtitle: Text('Publicado em ${post.createdAt.toString()} por ${poster.name}'),
-                    trailing: IconButton(onPressed: () {
-                      setState(() {
-                        post.favorited = !post.favorited;
-                      });}, icon: post.favorited
-                        ? Icon(Icons.favorite, color: Colors.redAccent)
-                        : Icon(Icons.favorite_border)),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute<void>(
-                              builder: (context) => PostDetails(post: post, poster: poster,)
-                          )
-                      );
-                    },
+          child: FutureBuilder(future: PostListController.listPosts(), builder: (context, snapshot) {
+            List<Widget> postLoaded;
+            if(snapshot.hasData){
+              postLoaded = [
+                Expanded(
+                  child: ListView.builder(itemCount: _posts.length, itemBuilder: (context, index) {
+                    final post = _posts[index];
+                    final poster = _posters[index];
+                    return Card(
+                      child: ListTile(
+                        title: Text(post.title),
+                        subtitle: Text('Publicado em ${post.createdAt.toString()} por ${poster.name}'),
+                        trailing: IconButton(onPressed: () {favorite(post);},
+                            icon: post.favorited
+                                ? Icon(Icons.favorite, color: Colors.redAccent)
+                                : Icon(Icons.favorite_border)),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute<void>(
+                                  builder: (context) => PostDetails(post: post, poster: poster,)
+                              )
+                          );
+                        },
+                      ),
+                    );
+                  }
                   ),
-                );
-              }
-              ),
-            )
-          ],
-        ),
+                )
+              ];
+            } else {
+              postLoaded = [
+                Text('Loading Post list. . .'),
+                SizedBox(
+                    width: 200,
+                    height: 20,
+                    child: LinearProgressIndicator(backgroundColor: Colors.deepPurple, color: Colors.deepPurpleAccent,))
+              ];
+            }
+            return Column(
+                mainAxisAlignment: .center,
+                children: postLoaded
+            );
+          })
+
       ),
     );
   }
@@ -113,14 +126,14 @@ class _PostDetailsState extends State<PostDetails> {
         _commenters.add(await UserListController.findUser(c.commenterId));
       }
     } catch(x) {
-      print('Sem dados persistidos $x');
+      ScaffoldMessenger.of(context).showSnackBar(.new(content: Text('Sem dados persistidos $x')));
     }
   }
   @override
   Widget build(BuildContext context){
     return Scaffold(
-        appBar: AppBar(title: Text('Detalhes da Publicação')),
-        body: Padding(padding: const EdgeInsets.all(12),
+      appBar: AppBar(title: Text('Detalhes da Publicação')),
+      body: Padding(padding: const EdgeInsets.all(12),
           child: Column(
             children: [
               Text(widget._post.title, style: TextStyle(fontSize: 20)),
@@ -143,7 +156,7 @@ class _PostDetailsState extends State<PostDetails> {
                             child: ClipRRect(
                                 borderRadius: BorderRadiusGeometry.circular(25),
                                 clipBehavior: Clip.antiAlias,
-                                child: Image.asset('images/Default-ProfilePic.png')
+                                child: SvgPicture.network('https://res.cloudinary.com/svdflnjt/image/upload/v1789745324/WorkServiceHub-DefaultProfilePic.svg')
                             ),
                           ),
                           title: Text(commenter.name),
@@ -152,8 +165,8 @@ class _PostDetailsState extends State<PostDetails> {
                       })
               )
             ],
-          ),
-        )
+          )
+      ),
     );
   }
 }

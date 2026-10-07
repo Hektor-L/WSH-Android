@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:workservicehub_project/controllers/auth_controller.dart';
-import 'package:workservicehub_project/models/classes/auth.dart';
+import 'package:workservicehub_project/views/splash1.dart';
 import 'package:workservicehub_project/views/splash2.dart';
 
 class Login extends StatefulWidget{
@@ -11,21 +11,18 @@ class Login extends StatefulWidget{
 }
 class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
-  final _nameTEC = TextEditingController();
   final _emailTEC = TextEditingController();
   final _passwordTEC = TextEditingController();
   @override
   void dispose() {
-    _nameTEC.dispose();
     _emailTEC.dispose();
     _passwordTEC.dispose();
     super.dispose();
   }
   void _sendForm() async {
     if(_formKey.currentState!.validate()) {
-      Auth auth = Auth(name: _nameTEC.text, email: _emailTEC.text, password: _passwordTEC.text, authToken: '');
-      if(await AuthController.verificaAutorizacaoOnline(auth)) {
-        ScaffoldMessenger.of(context).showSnackBar(.new(content: Text('Autenticado com êxito! Bem-vindo, ${auth.name}!')));
+      if(await AuthController.verifyAuthOnline(_emailTEC.text, _passwordTEC.text)) {
+        ScaffoldMessenger.of(context).showSnackBar(.new(content: Text('Autenticado com êxito! Bem-vindo, ${loginData.name}!')));
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Splash2()));
       } else {ScaffoldMessenger.of(context).showSnackBar(.new(content: Text('Usuário não foi autenticado, Tente novamente.')));}
     }
@@ -51,19 +48,6 @@ class _LoginState extends State<Login> {
                 child: Column(
                   mainAxisAlignment: .center,
                   children: [
-                    TextFormField(
-                      controller: _nameTEC,
-                      keyboardType: .emailAddress,
-                      decoration: .new(labelText: 'Nome de Usuário', border: OutlineInputBorder()),
-                      validator: (value) {
-                        if(value == null || value.isEmpty) {
-                          return 'Por favor, insira o seu nome de usuário.';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 20),
-
                     TextFormField(
                       controller: _emailTEC,
                       keyboardType: .visiblePassword,

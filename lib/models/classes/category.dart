@@ -20,13 +20,12 @@ class Category {
     );
   }
 
-  static String encode(List<Category> posts) =>
-      json.encode(
-        posts.map<Map<String, dynamic>>((p) => p.toMap()).toList(),
-      );
+  static String encode(List<Category> posts) => jsonEncode(
+      posts.map<Map<String, dynamic>>((p) => p.toMap()).toList()
+  );
 
   static List<Category> decode(String postsJson) =>
-      (json.decode(postsJson) as List<dynamic>)
+      (jsonDecode(postsJson) as List<dynamic>)
           .map<Category>((item) => Category.fromMap(item))
           .toList();
 }

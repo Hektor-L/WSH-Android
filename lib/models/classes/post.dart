@@ -23,6 +23,7 @@ class Post {
       'poster_id': posterId,
       //'category_id': categoryId.id,
       'category_id': categoryId,
+      'favorited': favorited
     };
   }
 
@@ -31,19 +32,19 @@ class Post {
       id: map['id'] ?? 0,
       title: map['title'] ?? '',
       description: map['description'] ?? '',
-      createdAt: DateTime.parse(map['created_at'].toString()),
-      posterId: map['poster_id'] ?? '',
+      createdAt: DateTime.parse((map['birthDate'] ?? DateTime.now()).toString()),
+      posterId: map['poster_id'] ?? 0,
       //categoryId: map['category_id'] ?? LocalStorageService.convertIntoCategory(1),
-      categoryId: map['category_id'] ?? '',
+      categoryId: map['category_id'] ?? 0,
       favorited: map['favorited'] ?? false,
     );
   }
-  static String encode(List<Post> posts) => json.encode(
-    posts.map<Map<String, dynamic>>((p) => p.toMap()).toList(),
+  static String encode(List<Post> posts) => jsonEncode(
+    posts.map<Map<String, dynamic>>((p) => p.toMap()).toList()
   );
 
   static List<Post> decode(String postsJson) =>
-    (json.decode(postsJson) as List<dynamic>)
+    (jsonDecode(postsJson) as List<dynamic>)
         .map<Post>((item) => Post.fromMap(item))
         .toList();
 }

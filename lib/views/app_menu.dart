@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'lista_posts.dart';
 import 'lista_favorited.dart';
 import 'profile_page.dart';
 
 class AppMenu extends StatefulWidget {
   const AppMenu({super.key});
-
   @override
   State<AppMenu> createState() => _AppMenuState();
 }
@@ -20,9 +20,9 @@ class _AppMenuState extends State<AppMenu> {
       title: 'WorkServiceHub',
       theme: ThemeData(
         bottomNavigationBarTheme: BottomNavigationBarThemeData(
-            backgroundColor: Colors.blue, selectedItemColor: CupertinoColors.white,
-            unselectedItemColor: CupertinoColors.systemPurple),
-        appBarTheme: AppBarTheme(backgroundColor: Colors.blue),
+            backgroundColor: Colors.lightBlue, selectedItemColor: CupertinoColors.white,
+            unselectedItemColor: CupertinoColors.systemGrey2),
+        appBarTheme: AppBarTheme(backgroundColor: Colors.lightBlue),
       ),
       home: const MainPage(title: 'WorkServiceHub'),
     );
@@ -68,7 +68,7 @@ class _MainState extends State<MainPage> {
           SizedBox(
             width: 300,
             height: 50,
-            child: Image.asset('images/WorkServiceHub-Logo.png')
+            child: SvgPicture.network('https://res.cloudinary.com/svdflnjt/image/upload/v1789745325/WorkServiceHub-Logo.svg')
           ),
         ],
       )
