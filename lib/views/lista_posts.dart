@@ -1,14 +1,11 @@
-import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:workservicehub_project/controllers/user_list_controller.dart';
 import 'package:workservicehub_project/models/classes/comment.dart';
 import 'package:workservicehub_project/models/classes/post.dart';
 import 'package:workservicehub_project/controllers/post_list_controller.dart';
 import 'package:workservicehub_project/controllers/comment_list_controller.dart';
 import 'package:workservicehub_project/models/classes/user.dart';
-import 'package:workservicehub_project/views/splash1.dart';
 
 class DropdownOptions {
   final String label;
@@ -34,17 +31,13 @@ class _ListaPostsState extends State<ListaPosts> {
   }
 
   void loadData() async {
-    try {
-      final data = await PostListController.listPosts();
-      for(Post p in data){
-        _posters.add(await UserListController.findUser(p.posterId));
-      }
-      setState(() {
-        _posts = data;
-      });
-    } catch(x) {
-      ScaffoldMessenger.of(context).showSnackBar(.new(content: Text('Sem dados persistidos $x')));
+    final data = await PostListController.listPosts();
+    for(Post p in data){
+      _posters.add(await UserListController.findUser(p.posterId));
     }
+    setState(() {
+      _posts = data;
+    });
   }
 
   void favorite(Post p) async {
@@ -105,8 +98,6 @@ class _ListaPostsState extends State<ListaPosts> {
     );
   }
 }
-const List<DropdownOptions> commentOptions = [DropdownOptions("Edit Comment", Icon(Icons.edit_outlined, color: Colors.blueAccent,)), DropdownOptions("Delete Comment", Icon(Icons.delete_outline, color: Colors.redAccent,))];
-
 class PostDetails extends StatefulWidget {
   const PostDetails({super.key, required this._post, required this._poster});
   final Post _post;
@@ -125,11 +116,11 @@ class _PostDetailsState extends State<PostDetails> {
   }
   void loadData() async {
     try {
-      final data = await CommentListController.listComments(widget._post);
+      final commentData = await CommentListController.listComments(widget._post, Comment.fromMap(<String, dynamic>{}));
       setState(() {
-        _comments = data;
+        _comments = commentData;
       });
-      for(Comment c in data){
+      for(Comment c in commentData) {
         _commenters.add(await UserListController.findUser(c.commenterId));
       }
     } catch(x) {
@@ -141,65 +132,85 @@ class _PostDetailsState extends State<PostDetails> {
     return Scaffold(
       appBar: AppBar(title: Text('Detalhes da Publicação')),
       body: Padding(padding: const EdgeInsets.all(12),
-        child: Column(
-          children: [
-            Text(widget._post.title, style: TextStyle(fontSize: 20)),
-            Text('Publicado em ${widget._post.createdAt.toString()}, por ${widget._poster.name}', style: TextStyle(color: CupertinoColors.systemGrey)),
-            Text(widget._post.description),
-            const SizedBox(height: 20,),
-            const Text('Comments:'),
-            const SizedBox(height: 12,),
-            Expanded(
-                child: _comments.isEmpty
-                    ? const Center(child: Text('No comments in this post.'))
-                    : ListView.builder(
-                    itemCount: _comments.length,
-                    itemBuilder: (context, index) {
-                      final comment = _comments[index];
-                      final commenter = _commenters[index];
-                      return Card (
-                          color: Colors.white,
-                          child: ListTile(
-                            leading:
-                            SizedBox(height: 45, width: 45,
-                              child: ClipRRect(
-                                    borderRadius: BorderRadiusGeometry.circular(25),
-                                    clipBehavior: Clip.antiAlias,
-                                    child: SvgPicture.network('https://res.cloudinary.com/svdflnjt/image/upload/v1789745324/WorkServiceHub-DefaultProfilePic.svg')
+          child: Column(
+              children: [
+                Text(widget._post.title, style: TextStyle(fontSize: 20)),
+                Text('Publicado em ${widget._post.createdAt.day}/${widget._post.createdAt.month}/${widget._post.createdAt.year} às '
+                    '${widget._post.createdAt.hour}:${widget._post.createdAt.minute}:${widget._post.createdAt.second}, por ${widget._poster.name}',
+                    style: TextStyle(color: CupertinoColors.systemGrey)),
+                Text(widget._post.description),
+                widget._post.imagePath.isNotEmpty
+                    ? Image.asset(widget._post.imagePath, height: 300,)
+                    : SizedBox(),
+                const SizedBox(height: 20,),
+                const Text('Comments:'),
+                const SizedBox(height: 12,),
+                Expanded(
+                    child: _comments.isEmpty
+                        ? const Center(child: Text('No comments in this post.'))
+                        : ListView.builder(
+                        itemCount: _comments.length,
+                        itemBuilder: (context, index) {
+                          final comment = _comments[index];
+                          final commenter = _commenters[index];
+                          return Card (
+                              color: Colors.white,
+                              child: Column(children: [
+                                ListTile(
+                                  leading:
+                                  SizedBox(height: 45, width: 45,
+                                    child: ClipRRect(
+                                        borderRadius: BorderRadiusGeometry.circular(25),
+                                        clipBehavior: Clip.antiAlias,
+                                        child: commenter.profilePicturePath.isEmpty
+                                            ? Image.asset('images/WorkServiceHub-DefaultProfilePic.png')
+                                            : Image.asset(commenter.profilePicturePath)
+                                    ),
+                                  ),
+                                  title: Text(commenter.name),
+                                  subtitle: Text(comment.text),
                                 ),
-                              ),
-                            title: Text(commenter.name),
-                            subtitle: Text(comment.text),
-                            trailing: commenter.id == loginData.id
-                                ? DropdownButton<DropdownOptions>(
-                                  items: commentOptions.map<DropdownMenuItem<DropdownOptions>>((DropdownOptions value) {
-                                    return DropdownMenuItem(
-                                        value: value,
-                                        child: Row(
-                                          children: [
-                                            value.icon,
-                                            Text(value.label),
-                                          ]
-                                        )
-                                    );
-                                  }).toList(),
-                                  icon: Icon(Icons.more_vert),
-                                  onChanged: (DropdownOptions? value) {
-                                    if(value!.label == "Edit Comment"){
-                                      log('Edit comment button activated.');
-                                    } else if(value.label == "Delete Comment") {
-                                      log('Delete comment button pressed.');
-                                    }
+                                FutureBuilder(future: CommentListController.listComments(Post.fromMap(<String, dynamic>{}), comment), builder: (context, snapshot) {
+                                  if(snapshot.hasData) {
+                                    final List<Comment> childComments = snapshot.data!;
+                                    final List<Widget> childCommentsLoaded;
+                                    childCommentsLoaded = [
+                                      for(Comment cc in childComments)
+                                        FutureBuilder(future: UserListController.findUser(cc.commenterId), builder: (context, snapshot) {
+                                          if(snapshot.hasData) {
+                                            final User childCommenter = snapshot.data!;
+                                            return ListTile(
+                                              leading:
+                                              SizedBox(height: 45, width: 45,
+                                                child: ClipRRect(
+                                                    borderRadius: BorderRadiusGeometry.circular(25),
+                                                    clipBehavior: Clip.antiAlias,
+                                                    child: childCommenter.profilePicturePath.isEmpty
+                                                        ? Image.asset('images/WorkServiceHub-DefaultProfilePic.png')
+                                                        : Image.asset(childCommenter.profilePicturePath)
+                                                ),
+                                              ),
+                                              title: Text(childCommenter.name),
+                                              subtitle: Text(cc.text),
+                                            );
+                                          } else {
+                                            return SizedBox();
+                                          }
+                                        })
+                                    ];
+                                    return Padding(padding: .fromSTEB(50, 0, 0, 0), child: Column(children: childCommentsLoaded,));
                                   }
+                                  return SizedBox();
+                                }
                                 )
-                                : SizedBox(height: 10, width: 10,)
-                          )
-                      );
-                    })
-            )
-          ],
-        )
-      ),
+                              ],
+                              )
+                          );
+                        })
+                )
+              ]
+          )
+      )
     );
   }
 }

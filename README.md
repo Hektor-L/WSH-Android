@@ -1,17 +1,14 @@
-# workservicehub_project
+![Logo](images/WorkServiceHub-Logo.png?raw=true)
+## Sobre o Projeto WorkServiceHub
 
-Um projeto cujo objetivo é a divulgação de serviços para trabalho
+Este projeto foi feito para o Trabalho Integrador do curso de Informática do *IFMG Campus Formiga* de **Hektor Luis Nascimento**.
 
-## Getting Started
+É basicamente um fórum e centro de informações, com foco em tópicos sobre trabalho, incluindo divulgação de vagas, currículos e serviços.
 
-This project is a starting point for a Flutter application.
+Seu público alvo vem de usuários comuns, trabalhadores e até empresas que desejam um lugar para compartilhar seus desejos e ofertas no mercado de trabalho.
 
-A few resources to get you started if this is your first Flutter project:
+## Agradecimentos
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+Este projeto não seria possível sem o ensino garantido pelo IFMG Campus Formiga!
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+![IFMG](https://www.formiga.ifmg.edu.br/media/templates/site/ifmgportal/images/Logo_Formiga.png)

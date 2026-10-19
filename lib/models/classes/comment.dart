@@ -5,10 +5,11 @@ class Comment {
   final String text;
   final int commenterId;
   final int postId;
+  final int parentCommentId;
   final DateTime createdAt;
 
   Comment({required this.id, required this.text, required this.commenterId, required this.postId,
-  required this.createdAt});
+    required this.parentCommentId, required this.createdAt});
 
   Map<String, dynamic> toMap() {
     return {
@@ -16,6 +17,7 @@ class Comment {
       'text': text,
       'commenter_id': commenterId,
       'post_id': postId,
+      'parent_comment_id': parentCommentId,
       'created_at': createdAt.toIso8601String()
     };
   }
@@ -26,6 +28,7 @@ class Comment {
         text: map['text'] ?? '',
         commenterId: map['commenter_id'] ?? 0,
         postId: map['post_id'] ?? 0,
+        parentCommentId: map['parent_comment_id'] ?? 0,
         createdAt: DateTime.parse((map['created_at'] ?? DateTime.now()).toString()),
     );
   }

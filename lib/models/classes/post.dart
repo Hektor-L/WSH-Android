@@ -9,10 +9,12 @@ class Post {
   final int posterId;
   //final Category category;
   final int categoryId;
+  final String webImagePath;
+  String imagePath;
   bool favorited;
 
   Post({required this.id, required this.title, required this.description,
-    required this.createdAt, required this.posterId, required this.categoryId, required this.favorited});
+    required this.createdAt, required this.posterId, required this.categoryId, required this.webImagePath, required this.imagePath, required this.favorited});
 
   Map<String, dynamic> toMap() {
     return {
@@ -23,7 +25,9 @@ class Post {
       'poster_id': posterId,
       //'category_id': categoryId.id,
       'category_id': categoryId,
-      'favorited': favorited
+      'image_path': webImagePath,
+      'mobile_image_path': imagePath,
+      'favorited': favorited,
     };
   }
 
@@ -36,6 +40,8 @@ class Post {
       posterId: map['poster_id'] ?? 0,
       //categoryId: map['category_id'] ?? LocalStorageService.convertIntoCategory(1),
       categoryId: map['category_id'] ?? 0,
+      webImagePath: map['image_path'] ?? '',
+      imagePath: map['mobile_image_path'] ?? '',
       favorited: map['favorited'] ?? false,
     );
   }

@@ -1,13 +1,17 @@
+import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:workservicehub_project/models/classes/post.dart';
+import 'package:workservicehub_project/models/classes/user.dart';
 
 class WebStorageService {
-  static String loginUrl = "http://127.0.0.1:8000/api/auth/login";
-  static String logoutUrl = "http://127.0.0.1:8000/api/auth/logout";
-  static String profileUrl = "http://127.0.0.1:8000/api/auth/user";
-  static String userListUrl = "http://127.0.0.1:8000/api/users";
-  static String postListUrl = "http://127.0.0.1:8000/api/posts";
-  static String commentListUrl = "http://127.0.0.1:8000/api/comments";
-  static String categoryListUrl = "http://127.0.0.1:8000/api/categories";
+  static String loginUrl = "https://workservicehub.wasmer.app/api/auth/login";
+  static String logoutUrl = "https://workservicehub.wasmer.app/api/auth/logout";
+  static String profileUrl = "https://workservicehub.wasmer.app/api/auth/user";
+  static String userListUrl = "https://workservicehub.wasmer.app/api/users";
+  static String postListUrl = "https://workservicehub.wasmer.app/api/posts";
+  static String commentListUrl = "https://workservicehub.wasmer.app/api/comments";
+  static String categoryListUrl = "https://workservicehub.wasmer.app/api/categories";
+  static String imageBasePath = "https://workservicehub.wasmer.app/storage";
 
   Future<Response> requestLogin (String email, String password) async {
     final reqHandler = Dio();
@@ -42,5 +46,25 @@ class WebStorageService {
     final reqHandler = Dio();
     reqHandler.options.headers['Authorization'] = 'Bearer $token';
     return await reqHandler.get(categoryListUrl);
+  }
+  String requestProfilePicture (User user) {
+    final reqHandler = Dio();
+    if(Platform.isAndroid) {
+      reqHandler.download('$imageBasePath/${user.webProfilePicturePath}', 'Android/media/com.ifmg.hektorl.workservicehub/profile_pictures/pfp${user.id}.jpg');
+      return 'Android/media/com.ifmg.hektorl.workservicehub/profile_pictures/pfp${user.id}.jpg';
+    } else {
+      reqHandler.download('$imageBasePath/${user.webProfilePicturePath}', 'images/storage/profile_pictures/pfp${user.id}.jpg');
+      return 'images/storage/profile_pictures/pfp${user.id}.jpg';
+    }
+  }
+  String requestPostImage (Post post) {
+    final reqHandler = Dio();
+    if(Platform.isAndroid) {
+      reqHandler.download('$imageBasePath/${post.webImagePath}', 'Android/media/com.ifmg.hektorl.workservicehub/post_images/post${post.id}.jpg');
+      return 'Android/media/com.ifmg.hektorl.workservicehub/post_images/post${post.id}.jpg';
+    } else {
+      reqHandler.download('$imageBasePath/${post.webImagePath}', 'images/storage/post_images/post${post.id}.jpg');
+      return 'images/storage/post_images/post${post.id}.jpg';
+    }
   }
 }

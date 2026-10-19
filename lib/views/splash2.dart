@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:workservicehub_project/controllers/auth_controller.dart';
 import 'package:workservicehub_project/models/classes/category.dart';
 import 'package:workservicehub_project/models/classes/comment.dart';
 import 'package:workservicehub_project/models/classes/post.dart';
@@ -22,11 +23,35 @@ class _Splash2State extends State<Splash2> {
       loginData = (await LocalStorageService.loadAuth())!;
       Response respUsers = await WebStorageService().requestUserList(loginData.token);
       if (respUsers.data != null) {
-        LocalStorageService.saveUsers(User.decode(jsonEncode(respUsers.data)));
+        List<User> userList = User.decode(jsonEncode(respUsers.data));
+        for(User u in userList) {
+          if(u.webProfilePicturePath.isNotEmpty) {
+            u.profilePicturePath = WebStorageService().requestProfilePicture(u);
+            if(u.id == loginData.id) {
+              AuthController.storeAuth(loginData.id, loginData.name, loginData.email, loginData.token,
+                  loginData.tokenType, loginData.type, loginData.description, loginData.birthDate,
+                  loginData.createdAt, WebStorageService().requestProfilePicture(u));
+            }
+          }
+        }
+        LocalStorageService.saveUsers(userList);
       }
+      loginData = (await LocalStorageService.loadAuth())!;
       Response respPosts = await WebStorageService().requestPostList(loginData.token);
       if (respPosts.data != null) {
-        LocalStorageService.savePosts(Post.decode(jsonEncode(respPosts.data)));
+        List<Post> newPostList = Post.decode(jsonEncode(respPosts.data));
+        List<Post> currentPostList = await LocalStorageService.loadPosts();
+        for(Post np in newPostList) {
+          for(Post cp in currentPostList) {
+            if(np.id == cp.id) {
+              np.favorited = cp.favorited;
+            }
+          }
+          if(np.webImagePath != '') {
+            np.imagePath = WebStorageService().requestPostImage(np);
+          }
+        }
+        LocalStorageService.savePosts(newPostList);
       }
       Response respComments = await WebStorageService().requestCommentList(loginData.token);
       if (respComments.data != null) {

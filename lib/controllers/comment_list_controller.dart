@@ -3,9 +3,9 @@ import 'package:workservicehub_project/models/classes/post.dart';
 import 'package:workservicehub_project/models/local_storage_service.dart';
 
 class CommentListController {
-  static Future<void> insertComment(int id, String text, DateTime createdAt, int commenterId, int postId) async {
+  static Future<void> insertComment(int id, String text, DateTime createdAt, int commenterId, int postId, int parentCommentId) async {
     List<Comment> list = await LocalStorageService.loadComments();
-    list.add(Comment(id: id, text: text, createdAt: createdAt, commenterId: commenterId, postId: postId));
+    list.add(Comment(id: id, text: text, createdAt: createdAt, commenterId: commenterId, postId: postId, parentCommentId: parentCommentId));
     await LocalStorageService.saveComments(list);
   }
   static Future<void> deletePost(int id) async {
@@ -18,9 +18,14 @@ class CommentListController {
     }
     await LocalStorageService.saveComments(list);
   }
-  static Future<List<Comment>> listComments(Post post) async {
-    List<Comment> list = await LocalStorageService.loadComments();
-    return list.where((instance) => instance.postId == post.id).toList();
+  static Future<List<Comment>> listComments(Post post, Comment pc) async {
+    if(post.id != 0 && post.title != '') {
+      List<Comment> list = await LocalStorageService.loadComments();
+      return list.where((instance) => instance.postId == post.id).toList();
+    } else if(pc.id != 0 && pc.text != '') {
+      List<Comment> list = await LocalStorageService.loadComments();
+      return list.where((instance) => instance.parentCommentId == pc.id).toList();
+    } else {throw ArgumentError('One of the arguments must not be null.');}
   }
 
 }

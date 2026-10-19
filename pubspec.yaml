@@ -36,7 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.9
   shared_preferences: ^2.5.5
   dio: ^5.11.1
-  flutter_svg: ^2.3.0
+  permission_handler: ^13.0.2
 
 dev_dependencies:
   flutter_test:
@@ -62,8 +62,9 @@ flutter:
 
   # To add images to your application, add an images section, like this:
   assets:
-    - images/WorkServiceHub-Logo.png
-    - images/Default-ProfilePic.png
+    - images/
+    - images/storage/profile_pictures/
+    - images/storage/post_images/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

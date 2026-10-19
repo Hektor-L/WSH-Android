@@ -7,9 +7,11 @@ class User {
   final String description;
   final DateTime birthDate;
   final String type;
+  final String webProfilePicturePath;
+  String profilePicturePath;
 
   User({required this.id, required this.name, required this.email, required this.description,
-    required this.birthDate, required this.type});
+    required this.birthDate, required this.type, required this.webProfilePicturePath, required this.profilePicturePath});
 
   Map<String, dynamic> toMap() {
     return {
@@ -19,17 +21,21 @@ class User {
       'description': description,
       'birthDate': birthDate.toIso8601String(),
       'type': type,
+      'profile_picture_path': webProfilePicturePath,
+      'mobile_pfp_path': profilePicturePath,
     };
   }
 
   factory User.fromMap(Map<String, dynamic> map) {
     return User(
-        id: map['id'] ?? 0,
-        name: map['name'] ?? '',
-        email: map['email'] ?? '',
-        description: map['description'] ?? '',
-        birthDate: DateTime.parse((map['birthDate'] ?? DateTime.now()).toString()),
-        type: map['type'] ?? 'common',
+      id: map['id'] ?? 0,
+      name: map['name'] ?? '',
+      email: map['email'] ?? '',
+      description: map['description'] ?? '',
+      birthDate: DateTime.parse((map['birthDate'] ?? DateTime.now()).toString()),
+      type: map['type'] ?? 'common',
+      webProfilePicturePath: map['profile_picture_path'] ?? '',
+      profilePicturePath: map['mobile_pfp_path'] ?? '',
     );
   }
   static String encode(List<User> posts) => jsonEncode(

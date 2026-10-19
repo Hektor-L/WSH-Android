@@ -2,9 +2,9 @@ import 'package:workservicehub_project/models/classes/user.dart';
 import 'package:workservicehub_project/models/local_storage_service.dart';
 
 class UserListController {
-  static Future<void> insertUser(int id, String name, String email, String description, DateTime birthDate, String type) async {
+  static Future<void> insertUser(int id, String name, String email, String description, DateTime birthDate, String type, String webProfilePicturePath, String profilePicturePath) async {
     List<User> list = await LocalStorageService.loadUsers();
-    list.add(User(id: id, name: name, email: email, description: description, birthDate: birthDate, type: type));
+    list.add(User(id: id, name: name, email: email, description: description, birthDate: birthDate, type: type, webProfilePicturePath: webProfilePicturePath, profilePicturePath: profilePicturePath));
     await LocalStorageService.saveUsers(list);
   }
   static Future<void> deletePost(int id) async {

@@ -50,7 +50,7 @@ class _LoginState extends State<Login> {
                   children: [
                     TextFormField(
                       controller: _emailTEC,
-                      keyboardType: .visiblePassword,
+                      keyboardType: .emailAddress,
                       decoration: .new(labelText: 'E-mail', border: OutlineInputBorder()),
                       validator: (value) {
                         if(value == null || value.isEmpty) {
@@ -64,7 +64,7 @@ class _LoginState extends State<Login> {
                     const SizedBox(height: 20,),
                     TextFormField(
                       controller: _passwordTEC,
-                      keyboardType: .emailAddress,
+                      keyboardType: .visiblePassword,
                       decoration: .new(labelText: 'Senha', border: OutlineInputBorder()),
                       validator: (value) {
                         if(value == null || value.isEmpty) {

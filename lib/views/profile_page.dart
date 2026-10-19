@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:workservicehub_project/models/classes/auth.dart';
 import 'package:workservicehub_project/models/local_storage_service.dart';
 import 'package:workservicehub_project/views/logoff.dart';
@@ -43,29 +42,30 @@ class _ProfilePageState extends State<ProfilePage> {
                   height: 100,
                   child: ClipRRect(
                       borderRadius: .circular(50),
-                      child: SvgPicture.network('https://res.cloudinary.com/svdflnjt/image/upload/v1789745324/WorkServiceHub-DefaultProfilePic.svg')
+                      child: _auth.profilePicturePath.isEmpty
+                          ? Image.asset('images/WorkServiceHub-DefaultProfilePic.png')
+                          : Image.asset(_auth.profilePicturePath)
                   ),
                 ),
                 Container(
                     width: 300,
                     height: 200,
-                    margin: EdgeInsets.all(10),
+                    margin: .all(10),
                     decoration: BoxDecoration(
                         color: Colors.grey,
-                        borderRadius: BorderRadius.circular(45)
+                        borderRadius: .circular(45)
                     ),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: .circular(20),
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: .center,
+                        crossAxisAlignment: .center,
                         children: [
                           Text("Nome: ${_auth.name}"),
                           Text("Email: ${_auth.email}"),
                           ElevatedButton(
-                              onPressed: () {Navigator.push(
-                                  context,
-                                  MaterialPageRoute<void>(
+                              onPressed: () {Navigator.pushReplacement(
+                                  context, MaterialPageRoute<void>(
                                       builder: (context) => Logoff()
                                   )
                               );

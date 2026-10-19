@@ -2,9 +2,9 @@ import 'package:workservicehub_project/models/classes/post.dart';
 import 'package:workservicehub_project/models/local_storage_service.dart';
 
 class PostListController {
-  static Future<void> insertPost(int id, String title, String description, DateTime postDate, int posterId, int categoryId) async {
+  static Future<void> insertPost(int id, String title, String description, DateTime postDate, int posterId, String webImagePath, String imagePath, int categoryId) async {
     List<Post> list = await LocalStorageService.loadPosts();
-    list.add(Post(id: id, title: title, description: description, createdAt: postDate, posterId: posterId, categoryId: categoryId, favorited: false));
+    list.add(Post(id: id, title: title, description: description, createdAt: postDate, posterId: posterId, categoryId: categoryId, webImagePath: webImagePath, imagePath: imagePath, favorited: false));
     await LocalStorageService.savePosts(list);
   }
   static Future<void> deletePost(int id) async {

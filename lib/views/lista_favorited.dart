@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:workservicehub_project/controllers/user_list_controller.dart';
 import 'package:workservicehub_project/models/classes/comment.dart';
 import 'package:workservicehub_project/models/classes/post.dart';
@@ -15,7 +14,7 @@ class ListaFavorited extends StatefulWidget {
 }
 
 class _ListaFavoritedState extends State<ListaFavorited> {
-  late List<Post> _posts = [];
+  final List<Post> _posts = [];
   final List<User> _posters = [];
 
   @override
@@ -28,15 +27,11 @@ class _ListaFavoritedState extends State<ListaFavorited> {
     try {
       final data = await PostListController.listPosts();
       for(Post p in data){
-        if(p.favorited == false) {
-          data.remove(p);
-          continue;
-        }
+        if(p.favorited == true) {
+          _posts.add(p);
+        } else {continue;}
         _posters.add(await UserListController.findUser(p.posterId));
       }
-      setState(() {
-        _posts = data;
-      });
     } catch(x) {
       ScaffoldMessenger.of(context).showSnackBar(.new(content: Text('Sem dados persistidos.')));
     }
@@ -99,7 +94,6 @@ class _ListaFavoritedState extends State<ListaFavorited> {
     );
   }
 }
-
 class PostDetails extends StatefulWidget {
   const PostDetails({super.key, required this._post, required this._poster});
   final Post _post;
@@ -118,16 +112,20 @@ class _PostDetailsState extends State<PostDetails> {
   }
   void loadData() async {
     try {
-      final data = await CommentListController.listComments(widget._post);
+      final commentData = await CommentListController.listComments(widget._post, Comment.fromMap(<String, dynamic>{}));
       setState(() {
-        _comments = data;
+        _comments = commentData;
       });
-      for(Comment c in data){
+      for(Comment c in commentData) {
         _commenters.add(await UserListController.findUser(c.commenterId));
       }
     } catch(x) {
       ScaffoldMessenger.of(context).showSnackBar(.new(content: Text('Sem dados persistidos $x')));
     }
+  }
+  Future<List<Comment>> findChildCommentsList(Comment parentComment) async {
+    final data = await CommentListController.listComments(Post.fromMap(<String, dynamic>{}), parentComment);
+    return data;
   }
   @override
   Widget build(BuildContext context){
@@ -137,7 +135,9 @@ class _PostDetailsState extends State<PostDetails> {
           child: Column(
             children: [
               Text(widget._post.title, style: TextStyle(fontSize: 20)),
-              Text('Publicado em ${widget._post.createdAt.toString()}, por ${widget._poster.name}', style: TextStyle(color: CupertinoColors.systemGrey)),
+              Text('Publicado em ${widget._post.createdAt.day}/${widget._post.createdAt.month}/${widget._post.createdAt.year} às '
+                  '${widget._post.createdAt.hour}:${widget._post.createdAt.minute}:${widget._post.createdAt.second}, por ${widget._poster.name}',
+                  style: TextStyle(color: CupertinoColors.systemGrey)),
               Text(widget._post.description),
               const SizedBox(height: 20,),
               const Text('Comments:'),
@@ -150,17 +150,58 @@ class _PostDetailsState extends State<PostDetails> {
                       itemBuilder: (context, index) {
                         final comment = _comments[index];
                         final commenter = _commenters[index];
-                        return ListTile(
-                          leading:
-                          SizedBox(height: 45, width: 45,
-                            child: ClipRRect(
-                                borderRadius: BorderRadiusGeometry.circular(25),
-                                clipBehavior: Clip.antiAlias,
-                                child: SvgPicture.network('https://res.cloudinary.com/svdflnjt/image/upload/v1789745324/WorkServiceHub-DefaultProfilePic.svg')
-                            ),
-                          ),
-                          title: Text(commenter.name),
-                          subtitle: Text(comment.text),
+                        return Card (
+                            color: Colors.white,
+                            child: Column(children: [
+                              ListTile(
+                                leading:
+                                SizedBox(height: 45, width: 45,
+                                  child: ClipRRect(
+                                      borderRadius: BorderRadiusGeometry.circular(25),
+                                      clipBehavior: Clip.antiAlias,
+                                      child: commenter.profilePicturePath.isEmpty
+                                          ? Image.asset('images/WorkServiceHub-DefaultProfilePic.png')
+                                          : Image.asset(commenter.profilePicturePath)
+                                  ),
+                                ),
+                                title: Text(commenter.name),
+                                subtitle: Text(comment.text),
+                              ),
+                              FutureBuilder(future: findChildCommentsList(comment), builder: (context, snapshot) {
+                                if(snapshot.hasData) {
+                                  final List<Comment> childComments = snapshot.data!;
+                                  final List<Widget> childCommentsLoaded;
+                                  childCommentsLoaded = [
+                                    for(Comment cc in childComments)
+                                      FutureBuilder(future: UserListController.findUser(cc.commenterId), builder: (context, snapshot) {
+                                        if(snapshot.hasData) {
+                                          final User childCommenter = snapshot.data!;
+                                          return ListTile(
+                                            leading:
+                                            SizedBox(height: 45, width: 45,
+                                              child: ClipRRect(
+                                                  borderRadius: BorderRadiusGeometry.circular(25),
+                                                  clipBehavior: Clip.antiAlias,
+                                                  child: childCommenter.profilePicturePath.isEmpty
+                                                      ? Image.asset('images/WorkServiceHub-DefaultProfilePic.png')
+                                                      : Image.asset(childCommenter.profilePicturePath)
+                                              ),
+                                            ),
+                                            title: Text(childCommenter.name),
+                                            subtitle: Text(cc.text),
+                                          );
+                                        } else {
+                                          return SizedBox(width: 30);
+                                        }
+                                      })
+                                  ];
+                                  return Padding(padding: .fromSTEB(50, 0, 0, 0), child: Column(children: childCommentsLoaded,));
+                                }
+                                return SizedBox(width: 30);
+                              }
+                              )
+                            ],
+                            )
                         );
                       })
               )

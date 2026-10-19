@@ -10,11 +10,12 @@ class Auth {
   final String description;
   final DateTime birthDate;
   final DateTime createdAt;
+  String profilePicturePath;
 
 
   //construtor da classe que recer cada um de seus atributos
   Auth({required this.id, required this.name, required this.email, required this.token, required this.tokenType,
-    required this.type, required this.description, required this.birthDate, required this.createdAt});
+    required this.type, required this.description, required this.birthDate, required this.createdAt, required this.profilePicturePath});
 
   // Converte o objeto para um Map
   Map<String, dynamic> toMap() {
@@ -27,7 +28,8 @@ class Auth {
       'type': type,
       'description': description,
       'birth_date': birthDate.toIso8601String(),
-      'created_at': createdAt.toIso8601String()
+      'created_at': createdAt.toIso8601String(),
+      'mobile_pfp_path': profilePicturePath,
     };
   }
 
@@ -43,6 +45,7 @@ class Auth {
       description: map['description'] ?? '',
       birthDate: DateTime.parse((map['birthDate'] ?? DateTime.now()).toString()),
       createdAt: DateTime.parse((map['created_at'] ?? DateTime.now()).toString()),
+      profilePicturePath: map['mobile_pfp_path'] ?? '',
     );
   }
 
