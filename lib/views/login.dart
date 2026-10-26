@@ -77,7 +77,7 @@ class _LoginState extends State<Login> {
                     ),
                     const SizedBox(height: 25),
                     ElevatedButton(onPressed: _sendForm,
-                      style: .new(backgroundColor: .all(Colors.deepPurpleAccent)),
+                      style: .new(backgroundColor: .all(Colors.lightBlue), foregroundColor: .all(Colors.white)),
                       child: const Text('Log In'),
                     )
                   ],

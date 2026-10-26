@@ -1,7 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:workservicehub_project/models/classes/auth.dart';
 import 'package:workservicehub_project/models/local_storage_service.dart';
-import 'package:workservicehub_project/views/logoff.dart';
+import 'package:workservicehub_project/views/logout.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -12,80 +13,57 @@ class ProfilePage extends StatefulWidget {
 
 //classe altualizavel da tela
 class _ProfilePageState extends State<ProfilePage> {
-  late Auth _auth;
-  @override
-  void initState() {
-    super.initState();
-    getAuth();
-  }
-  void getAuth() async {
-    try {
-      final data = await LocalStorageService.loadAuth();
-      setState(() {
-        _auth = data!;
-      });
-    } catch(x) {
-      print('Autenticação não encontrada, como você chegou aqui? Erro: $x');
-    }
-  }
   //método de inicialização da tela
   @override
   Widget build(BuildContext context){
     return Scaffold(
-        body: Center(
+        body: Padding(padding: .all(24),
           child: FutureBuilder(future: LocalStorageService.loadAuth(), builder: (context, snapshot) {
             List<Widget> children;
             if(snapshot.hasData) {
+              Auth auth = snapshot.data!;
               children = [
-                SizedBox(
-                  width: 100,
-                  height: 100,
-                  child: ClipRRect(
-                      borderRadius: .circular(50),
-                      child: _auth.profilePicturePath.isEmpty
-                          ? Image.asset('images/WorkServiceHub-DefaultProfilePic.png')
-                          : Image.asset(_auth.profilePicturePath)
-                  ),
-                ),
-                Container(
-                    width: 300,
-                    height: 200,
-                    margin: .all(10),
-                    decoration: BoxDecoration(
-                        color: Colors.grey,
-                        borderRadius: .circular(45)
+                Row(
+                  spacing: 20,
+                  children: [
+                    SizedBox(
+                      width: 100,
+                      height: 100,
+                      child: ClipRRect(
+                          borderRadius: .circular(50),
+                          child: auth.profilePicturePath.isEmpty
+                              ? Image.asset('images/WorkServiceHub-DefaultProfilePic.png')
+                              : Platform.isAndroid ? Image.file(File(auth.profilePicturePath)) : Image.asset(auth.profilePicturePath)
+                      )
                     ),
-                    child: ClipRRect(
-                      borderRadius: .circular(20),
-                      child: Column(
-                        mainAxisAlignment: .center,
-                        crossAxisAlignment: .center,
-                        children: [
-                          Text("Nome: ${_auth.name}"),
-                          Text("Email: ${_auth.email}"),
-                          ElevatedButton(
-                              onPressed: () {Navigator.pushReplacement(
-                                  context, MaterialPageRoute<void>(
-                                      builder: (context) => Logoff()
-                                  )
-                              );
-                              }, child: Text('Sair'))
-                        ],
-                      ),
-                    )
+                    Text(auth.name, style: .new(fontSize: 30))
+                  ],
+                ),
+                Text('Data de nascimento: ${auth.birthDate.day}/${auth.birthDate.month}/${auth.birthDate.year}', 
+                    style: .new(fontSize: 10)),
+                Text(auth.description),
+                ElevatedButton(
+                    onPressed: () {Navigator.pushReplacement(context, MaterialPageRoute<void>(builder: (context) => Logout()));},
+                    style: .new(backgroundColor: .all(Colors.redAccent), foregroundColor: .all(Colors.white)), child: Text('Sair')
                 )
               ];
             } else {
               children = [
-                Text('Loading Profile. . .'),
-                SizedBox(
-                  width: 200,
-                  height: 20,
-                  child: LinearProgressIndicator(backgroundColor: Colors.deepPurple, color: Colors.deepPurpleAccent,)
+                Center(
+                  child: Column(
+                    children: [
+                      Text('Carregando Perfil. . .'),
+                      SizedBox(
+                          width: 200,
+                          height: 20,
+                          child: LinearProgressIndicator(backgroundColor: Colors.deepPurple, color: Colors.deepPurpleAccent,)
+                      )
+                    ],
+                  )
                 )
               ];
             }
-            return Column(mainAxisAlignment: .center, crossAxisAlignment: .center, children: children);
+            return Column(mainAxisAlignment: .center, spacing: 15, children: children);
           },)
         )
     );

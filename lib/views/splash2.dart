@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:workservicehub_project/controllers/auth_controller.dart';
@@ -26,11 +25,11 @@ class _Splash2State extends State<Splash2> {
         List<User> userList = User.decode(jsonEncode(respUsers.data));
         for(User u in userList) {
           if(u.webProfilePicturePath.isNotEmpty) {
-            u.profilePicturePath = WebStorageService().requestProfilePicture(u);
+            u.profilePicturePath = await WebStorageService().requestProfilePicture(u);
             if(u.id == loginData.id) {
               AuthController.storeAuth(loginData.id, loginData.name, loginData.email, loginData.token,
                   loginData.tokenType, loginData.type, loginData.description, loginData.birthDate,
-                  loginData.createdAt, WebStorageService().requestProfilePicture(u));
+                  loginData.createdAt, await WebStorageService().requestProfilePicture(u));
             }
           }
         }
@@ -48,7 +47,7 @@ class _Splash2State extends State<Splash2> {
             }
           }
           if(np.webImagePath != '') {
-            np.imagePath = WebStorageService().requestPostImage(np);
+            np.imagePath = await WebStorageService().requestPostImage(np);
           }
         }
         LocalStorageService.savePosts(newPostList);
@@ -68,8 +67,8 @@ class _Splash2State extends State<Splash2> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(seconds: 2), () {
-      downloadData();
+    downloadData();
+    Future.delayed(Duration(seconds: 3), () {
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AppMenu()));
     });
   }
@@ -82,9 +81,9 @@ class _Splash2State extends State<Splash2> {
           mainAxisAlignment: .center,
           crossAxisAlignment: .center,
           children: [
-            Text('Loading Forum. . .'),
+            Text('Carregando o Fórum. . .'),
             SizedBox(height: 15, width: 140,
-              child: LinearProgressIndicator(backgroundColor: Colors.deepPurple, color: Colors.deepPurpleAccent,),
+              child: LinearProgressIndicator(backgroundColor: Colors.deepPurple, color: Colors.deepPurpleAccent),
             ),
           ],
         ),

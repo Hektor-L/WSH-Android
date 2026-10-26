@@ -2,23 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:workservicehub_project/controllers/auth_controller.dart';
 import 'package:workservicehub_project/views/login.dart';
 
-class Logoff extends StatefulWidget{
-  const Logoff({super.key});
-
+class Logout extends StatefulWidget{
+  const Logout({super.key});
   @override
-  State<Logoff> createState() => _LogoffState();
+  State<Logout> createState() => _LogoutState();
 }
-class _LogoffState extends State<Logoff> {
+class _LogoutState extends State<Logout> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(seconds: 3), () {
-      fazerLogoff();
+    Future.delayed(Duration(seconds: 3), () async {
+      await AuthController.unloadAuth();
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
     });
-  }
-  void fazerLogoff() async {
-    await AuthController.unloadAuth();
   }
   @override
   Widget build(BuildContext context){

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:workservicehub_project/models/classes/post.dart';
 import 'package:workservicehub_project/models/classes/user.dart';
 
@@ -47,21 +48,37 @@ class WebStorageService {
     reqHandler.options.headers['Authorization'] = 'Bearer $token';
     return await reqHandler.get(categoryListUrl);
   }
-  String requestProfilePicture (User user) {
+  Future<String> requestProfilePicture (User user) async {
     final reqHandler = Dio();
     if(Platform.isAndroid) {
-      reqHandler.download('$imageBasePath/${user.webProfilePicturePath}', 'Android/media/com.ifmg.hektorl.workservicehub/profile_pictures/pfp${user.id}.jpg');
-      return 'Android/media/com.ifmg.hektorl.workservicehub/profile_pictures/pfp${user.id}.jpg';
+      final Directory appTempDir = await getTemporaryDirectory();
+      final Directory appTempFolder = Directory('${appTempDir.path}/profile_pictures');
+      if(await appTempFolder.exists()) {
+        reqHandler.download('$imageBasePath/${user.webProfilePicturePath}', '${appTempFolder.path}/pfp${user.id}.jpg');
+        return '${appTempFolder.path}/pfp${user.id}.jpg';
+      } else {
+        final Directory appTempNewFolder = await appTempFolder.create(recursive: true);
+        reqHandler.download('$imageBasePath/${user.webProfilePicturePath}', '${appTempNewFolder.path}/pfp${user.id}.jpg');
+        return '${appTempNewFolder.path}/pfp${user.id}.jpg';
+      }
     } else {
       reqHandler.download('$imageBasePath/${user.webProfilePicturePath}', 'images/storage/profile_pictures/pfp${user.id}.jpg');
       return 'images/storage/profile_pictures/pfp${user.id}.jpg';
     }
   }
-  String requestPostImage (Post post) {
+  Future<String> requestPostImage (Post post) async {
     final reqHandler = Dio();
     if(Platform.isAndroid) {
-      reqHandler.download('$imageBasePath/${post.webImagePath}', 'Android/media/com.ifmg.hektorl.workservicehub/post_images/post${post.id}.jpg');
-      return 'Android/media/com.ifmg.hektorl.workservicehub/post_images/post${post.id}.jpg';
+      final Directory appTempDir = await getTemporaryDirectory();
+      final Directory appTempFolder = Directory('${appTempDir.path}/post_images');
+      if(await appTempFolder.exists()) {
+        reqHandler.download('$imageBasePath/${post.webImagePath}', '${appTempFolder.path}/post${post.id}.jpg');
+        return '${appTempFolder.path}/post${post.id}.jpg';
+      } else {
+        final Directory appTempNewFolder = await appTempFolder.create(recursive: true);
+        reqHandler.download('$imageBasePath/${post.webImagePath}', '${appTempNewFolder.path}/post${post.id}.jpg');
+        return '${appTempNewFolder.path}/post${post.id}.jpg';
+      }
     } else {
       reqHandler.download('$imageBasePath/${post.webImagePath}', 'images/storage/post_images/post${post.id}.jpg');
       return 'images/storage/post_images/post${post.id}.jpg';

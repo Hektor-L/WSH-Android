@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:workservicehub_project/controllers/user_list_controller.dart';
@@ -60,7 +61,9 @@ class _ListaPostsState extends State<ListaPosts> {
                     color: Colors.white,
                     child: ListTile(
                       title: Text(post.title),
-                      subtitle: Text('Publicado em ${post.createdAt.toString()} por ${poster.name}'),
+                      subtitle: Text('Publicado em ${post.createdAt.day}/${post.createdAt.month}/${post.createdAt.year} às '
+                          '${post.createdAt.hour}:${post.createdAt.minute}:${post.createdAt.second}, por ${poster.name}',
+                          style: TextStyle(color: CupertinoColors.systemGrey)),
                       trailing: IconButton(onPressed: () {favorite(post);},
                           icon: post.favorited
                               ? Icon(Icons.favorite, color: Colors.redAccent)
@@ -140,7 +143,7 @@ class _PostDetailsState extends State<PostDetails> {
                     style: TextStyle(color: CupertinoColors.systemGrey)),
                 Text(widget._post.description),
                 widget._post.imagePath.isNotEmpty
-                    ? Image.asset(widget._post.imagePath, height: 300,)
+                    ? Platform.isAndroid ? Expanded(child: Image.file(File(widget._post.imagePath), height: 300)) : Expanded(child: Image.asset(widget._post.imagePath, height: 300))
                     : SizedBox(),
                 const SizedBox(height: 20,),
                 const Text('Comments:'),
@@ -164,7 +167,7 @@ class _PostDetailsState extends State<PostDetails> {
                                         clipBehavior: Clip.antiAlias,
                                         child: commenter.profilePicturePath.isEmpty
                                             ? Image.asset('images/WorkServiceHub-DefaultProfilePic.png')
-                                            : Image.asset(commenter.profilePicturePath)
+                                            : Platform.isAndroid ? Image.file(File(commenter.profilePicturePath)) : Image.asset(commenter.profilePicturePath)
                                     ),
                                   ),
                                   title: Text(commenter.name),
@@ -187,7 +190,7 @@ class _PostDetailsState extends State<PostDetails> {
                                                     clipBehavior: Clip.antiAlias,
                                                     child: childCommenter.profilePicturePath.isEmpty
                                                         ? Image.asset('images/WorkServiceHub-DefaultProfilePic.png')
-                                                        : Image.asset(childCommenter.profilePicturePath)
+                                                        : Platform.isAndroid ? Image.file(File(childCommenter.profilePicturePath)) : Image.asset(childCommenter.profilePicturePath)
                                                 ),
                                               ),
                                               title: Text(childCommenter.name),
