@@ -36,7 +36,7 @@ class Post {
       id: map['id'] ?? 0,
       title: map['title'] ?? '',
       description: map['description'] ?? '',
-      createdAt: DateTime.parse((map['created_at'] ?? DateTime.now().toIso8601String())),
+      createdAt: DateTime.parse(map['created_at'] ?? DateTime.now().toIso8601String()),
       posterId: map['poster_id'] ?? 0,
       //categoryId: map['category_id'] ?? LocalStorageService.convertIntoCategory(1),
       categoryId: map['category_id'] ?? 0,

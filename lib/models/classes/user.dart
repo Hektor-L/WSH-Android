@@ -32,7 +32,7 @@ class User {
       name: map['name'] ?? '',
       email: map['email'] ?? '',
       description: map['description'] ?? '',
-      birthDate: DateTime.parse((map['birth_date'] ?? DateTime.utc(1900).toIso8601String())),
+      birthDate: DateTime.parse(map['birth_date'] ?? DateTime.utc(1900).toIso8601String()),
       type: map['type'] ?? 'common',
       webProfilePicturePath: map['profile_picture_path'] ?? '',
       profilePicturePath: map['mobile_pfp_path'] ?? '',

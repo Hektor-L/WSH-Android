@@ -56,13 +56,17 @@ class _ListaFavoritedState extends State<ListaFavorited> {
                     final post = _posts[index];
                     final poster = _posters[index];
                     return Card(
+                      color: Colors.white,
                       child: ListTile(
                         title: Text(post.title),
-                        subtitle: Text('Publicado em ${post.createdAt.toString()} por ${poster.name}'),
-                        trailing: IconButton(onPressed: () {favorite(post);},
+                        subtitle: Text('Publicado em ${post.createdAt.day}/${post.createdAt.month}/${post.createdAt.year} às '
+                            '${post.createdAt.hour}:${post.createdAt.minute}:${post.createdAt.second}, por ${poster.name}',
+                            style: TextStyle(color: CupertinoColors.systemGrey)),
+                        trailing: IconButton(onPressed: () => favorite(post),
                             icon: post.favorited
                                 ? Icon(Icons.favorite, color: Colors.redAccent)
-                                : Icon(Icons.favorite_border)),
+                                : Icon(Icons.favorite_border)
+                        ),
                         onTap: () {
                           Navigator.push(
                               context,

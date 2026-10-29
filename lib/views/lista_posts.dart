@@ -64,10 +64,11 @@ class _ListaPostsState extends State<ListaPosts> {
                       subtitle: Text('Publicado em ${post.createdAt.day}/${post.createdAt.month}/${post.createdAt.year} às '
                           '${post.createdAt.hour}:${post.createdAt.minute}:${post.createdAt.second}, por ${poster.name}',
                           style: TextStyle(color: CupertinoColors.systemGrey)),
-                      trailing: IconButton(onPressed: () {favorite(post);},
+                      trailing: IconButton(onPressed: () => favorite(post),
                           icon: post.favorited
                               ? Icon(Icons.favorite, color: Colors.redAccent)
-                              : Icon(Icons.favorite_border)),
+                              : Icon(Icons.favorite_border)
+                      ),
                       onTap: () {
                         Navigator.push(
                             context,

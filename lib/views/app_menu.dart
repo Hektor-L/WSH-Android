@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:workservicehub_project/views/splash2.dart';
 import 'lista_posts.dart';
 import 'lista_favorited.dart';
 import 'profile_page.dart';
@@ -65,13 +64,10 @@ class _MainState extends State<MainPage> {
       backgroundColor: AppBarTheme.of(context).backgroundColor,
       title: Row(
         children: [
-          Expanded(
-              child: SizedBox(
-                  height: 50,
-                  child: Image.asset('images/WorkServiceHub-Logo.png')
-          )),
-          IconButton(onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Splash2())),
-              icon: Icon(Icons.refresh), tooltip: 'Reload all current app data from the internet')
+          SizedBox(
+              height: 50,
+              child: Image.asset('images/WorkServiceHub-Logo.png')
+          ),
         ],
       )
     );

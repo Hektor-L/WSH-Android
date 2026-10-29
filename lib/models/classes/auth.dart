@@ -43,8 +43,8 @@ class Auth {
       type: map['type'] ?? '',
       tokenType: map['token_type'] ?? '',
       description: map['description'] ?? '',
-      birthDate: DateTime.parse((map['birthDate'] ?? DateTime.now()).toString()),
-      createdAt: DateTime.parse((map['created_at'] ?? DateTime.now()).toString()),
+      birthDate: DateTime.parse(map['birth_date'] ?? DateTime.utc(1900).toIso8601String()),
+      createdAt: DateTime.parse(map['created_at'] ?? DateTime.now().toIso8601String()),
       profilePicturePath: map['mobile_pfp_path'] ?? '',
     );
   }
